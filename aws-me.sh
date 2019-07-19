@@ -3,9 +3,9 @@
 PROFILE=$1
 if [[ $1 = '--help' ]] || [[ $1 = '-h' ]]; then
     cat << EOF
-Usage: awsme.sh [-c|--clear] [PROFILE]
+Usage: awsme.sh [-u|--unset] [PROFILE]
 
- -c, --clear  (optional) Unset all AWS-related ENVVARs
+ -u, --unset  (optional) Unset all AWS-related ENVVARs
  PROFILE      (optional) Set ENVVARs for PROFILE
 
 If no arguments are given, lists all profiles defined in the
@@ -18,12 +18,12 @@ AWS_CREDENTIALS="$HOME/.aws/credentials"
 
 if [[ $1 = '' ]]; then
     # list profiles configured in the credentials file
-    PROFILES=`perl -ne 'print "$1\n" if /\[(.*)\]/' $HOME/.aws/credentials | sort`
+    PROFILES=`perl -ne 'print "$1\n" if /\[(.*)\]/' $AWS_CREDENTIALS | sort`
     for profile in $PROFILES
     do
         echo $profile
     done
-elif [[ $1 = '-c' || $1 = '--clear' ]]; then
+elif [[ $1 = '-u' || $1 = '--unset' ]]; then
     # unset AWS environment variables
     AWS_ENVVARS=("AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
     for envvar in ${AWS_ENVVARS[*]}
