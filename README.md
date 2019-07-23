@@ -23,9 +23,9 @@ This script has only been tested in Bash 5.0.x on Mac OS.
 ## Usage
 
 ```
-Usage: aws-me.sh [-c|--clear] [PROFILE]
+Usage: aws-me.sh [-u|--unset] [PROFILE]
 
- -c, --clear  (optional) Unset all AWS-related ENVVARs
+ -u, --unset  (optional) Unset all AWS-related ENVVARs
  PROFILE      (optional) Set ENVVARs for PROFILE
 
 If no arguments are given, lists all profiles defined in the
@@ -37,7 +37,7 @@ You'll want to run this in conjunction with `source` to make the changes stick i
 ```
 $ echo $AWS_ACCESS_KEY_ID
 
-$ source aws-me.sh some-profile
-[some-profile] $ echo $AWS_ACCESS_KEY_ID
+$ source aws-me.sh someprofile
+[someprofile] $ echo $AWS_ACCESS_KEY_ID
 AXXXXXXXXXXXXXXXXXXX
 ```
