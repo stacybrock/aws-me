@@ -63,6 +63,6 @@ else
         if [ -z ${_OLD_AWSME_PROMPT+x} ]; then
             export _OLD_AWSME_PROMPT=$PS1
         fi
-        export PS1="[$1] $_OLD_AWSME_PROMPT"
+        export PS1="\e[1;33m[$1]\e[m $_OLD_AWSME_PROMPT"
     fi
 fi
