@@ -8,21 +8,32 @@ Usage: awsme.sh [-u|--unset] [PROFILE]
  -u, --unset  (optional) Unset all AWS-related ENVVARs
  PROFILE      (optional) Set ENVVARs for PROFILE
 
+Retrieves credentials stored in a Pass store by default. To use
+an AWS credentials file, set the USE_AWS_CREDENTIALS_FILE
+environment variable to the absolute path where the file is
+located.
+
 If no arguments are given, lists all profiles defined in the
-credentials file.
+pass store or credentials file.
 EOF
     exit
 fi
 
-AWS_CREDENTIALS="$HOME/.aws/credentials"
+PASS_STORE="$HOME/.password-store/AWS"
 
 if [[ $1 = '' ]]; then
-    # list profiles configured in the credentials file
-    PROFILES=`perl -ne 'print "$1\n" if /\[(.*)\]/' $AWS_CREDENTIALS | sort`
-    for profile in $PROFILES
-    do
-        echo $profile
-    done
+    if [[ ! -z ${USE_AWS_CREDENTIALS_FILE+x} ]]; then
+        # list profiles configured in the credentials file
+        ARGS=(-ne 'print "$1\n" if /\[(.*)\]/' $USE_AWS_CREDENTIALS_FILE)
+        PROFILES=$(perl "${ARGS[@]}" | sort)
+        for profile in $PROFILES
+        do
+            echo $profile
+        done
+    else
+        # list profiles in the pass store
+        ls -1 $PASS_STORE
+    fi
 elif [[ $1 = '-u' || $1 = '--unset' ]]; then
     # unset AWS environment variables
     AWS_ENVVARS=("AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
@@ -36,16 +47,15 @@ elif [[ $1 = '-u' || $1 = '--unset' ]]; then
         export PS1=$_OLD_AWSME_PROMPT
         unset _OLD_AWSME_PROMPT
     fi
-
     echo "AWS environment cleared."
 else
     # configure environment for the given profile
 
-    # check if .use-credentials-file exists
-    if [[ -f .use-credentials-file ]]; then
+    # check if USE_AWS_CREDENTIALS_FILE envvar is set
+    if [[ ! -z ${USE_AWS_CREDENTIALS_FILE+x} ]]; then
         echo "Extracting keys from credentials file..."
-        AKEY=`grep -A2 "$1" $AWS_CREDENTIALS | grep aws_access_key_id | awk '{ print $3 }'`
-        SKEY=`grep -A2 "$1" $AWS_CREDENTIALS | grep aws_secret_access_key | awk '{ print $3 }'`
+        AKEY=`grep -A2 "$1" $USE_AWS_CREDENTIALS_FILE | grep aws_access_key_id | awk '{ print $3 }'`
+        SKEY=`grep -A2 "$1" $USE_AWS_CREDENTIALS_FILE | grep aws_secret_access_key | awk '{ print $3 }'`
     else
         echo "Extracting keys from pass store..."
         AKEY=`pass AWS/$1/aws_access_key_id`
