@@ -43,10 +43,4 @@ pass store or credentials file.
 
 You'll want to run this in conjunction with `source` to make the changes stick in the current shell.
 
-```
-$ echo $AWS_ACCESS_KEY_ID
-
-$ source aws-me.sh someprofile
-[someprofile] $ echo $AWS_ACCESS_KEY_ID
-AXXXXXXXXXXXXXXXXXXX
-```
+![example usage](example_usage.png)
