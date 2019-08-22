@@ -10,7 +10,8 @@ Usage: awsme.sh [-u|--unset] [PROFILE]
 
 Retrieves credentials stored in a Pass store by default. To use
 an AWS credentials file, set the USE_AWS_CREDENTIALS_FILE
-environment variable to 'True'.
+environment variable to the absolute path where the file is
+located.
 
 If no arguments are given, lists all profiles defined in the
 pass store or credentials file.
@@ -18,13 +19,13 @@ EOF
     exit
 fi
 
-AWS_CREDENTIALS="$HOME/.aws/credentials"
 PASS_STORE="$HOME/.password-store/AWS"
 
 if [[ $1 = '' ]]; then
-    if [[ $USE_AWS_CREDENTIALS_FILE = 'True' ]]; then
+    if [[ ! -z ${USE_AWS_CREDENTIALS_FILE+x} ]]; then
         # list profiles configured in the credentials file
-        PROFILES=`perl -ne 'print "$1\n" if /\[(.*)\]/' $AWS_CREDENTIALS | sort`
+        ARGS=(-ne 'print "$1\n" if /\[(.*)\]/' $USE_AWS_CREDENTIALS_FILE)
+        PROFILES=$(perl "${ARGS[@]}" | sort)
         for profile in $PROFILES
         do
             echo $profile
@@ -51,10 +52,10 @@ else
     # configure environment for the given profile
 
     # check if USE_AWS_CREDENTIALS_FILE envvar is set
-    if [[ $USE_AWS_CREDENTIALS_FILE = 'True' ]]; then
+    if [[ ! -z ${USE_AWS_CREDENTIALS_FILE+x} ]]; then
         echo "Extracting keys from credentials file..."
-        AKEY=`grep -A2 "$1" $AWS_CREDENTIALS | grep aws_access_key_id | awk '{ print $3 }'`
-        SKEY=`grep -A2 "$1" $AWS_CREDENTIALS | grep aws_secret_access_key | awk '{ print $3 }'`
+        AKEY=`grep -A2 "$1" $USE_AWS_CREDENTIALS_FILE | grep aws_access_key_id | awk '{ print $3 }'`
+        SKEY=`grep -A2 "$1" $USE_AWS_CREDENTIALS_FILE | grep aws_secret_access_key | awk '{ print $3 }'`
     else
         echo "Extracting keys from pass store..."
         AKEY=`pass AWS/$1/aws_access_key_id`

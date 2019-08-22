@@ -16,9 +16,13 @@ Password Store
         └── aws_secret_access_key
 ```
 
-Alternatively, you can retrieve AWS credentials stored in the default `$HOME/.aws/credentials` file. To enable this, set an `USE_AWS_CREDENTIALS_FILE` environment variable to `True`.
+Alternatively, you can retrieve AWS credentials from a credentials file. To enable this, set an `USE_AWS_CREDENTIALS_FILE` environment variable to the absolute path where your AWS credentials file is located.
 
-This script has only been tested in Bash 5.0.x on Mac OS.
+```
+$ export USE_AWS_CREDENTIALS_FILE='/Users/somebody/.aws/credentials'
+```
+
+**NOTE:** This script has only been tested in Bash 5.0.x on Mac OS.
 
 ## Usage
 
@@ -30,7 +34,8 @@ Usage: awsme.sh [-u|--unset] [PROFILE]
 
 Retrieves credentials stored in a Pass store by default. To use
 an AWS credentials file, set the USE_AWS_CREDENTIALS_FILE
-environment variable to 'True'.
+environment variable to the absolute path where the file is
+located.
 
 If no arguments are given, lists all profiles defined in the
 pass store or credentials file.
